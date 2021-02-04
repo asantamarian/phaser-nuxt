@@ -1,6 +1,13 @@
 import "~/game/PhaserBridge";
-var platforms,player,cursors;
+var platforms,player,cursors,stars;
+function collectStar (player, star) {
+
+  // Removes the star from the screen
+  star.kill();
+
+}
 class GameState extends Phaser.State {
+
   create() {
     if (this.game.$settings.debug) {
       this.game.time.advancedTiming = true;
@@ -50,11 +57,29 @@ class GameState extends Phaser.State {
     //  Our two animations, walking left and right.
     player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
-    
+
+    stars = this.add.group();
+
+    stars.enableBody = true;
+
+    //  Here we'll create 12 of them evenly spaced apart
+    for (var i = 0; i < 12; i++)
+    {
+        //  Create a star inside of the 'stars' group
+        var star = stars.create(i * 70, 0, 'star');
+
+        //  Let gravity do its thing
+        star.body.gravity.y = 6;
+
+        //  This just gives each star a slightly random bounce value
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
     console.log("GAME");
   }
 update(){
     var hitPlatform = this.physics.arcade.collide(player, platforms);
+    this.physics.arcade.collide(stars, platforms);
+    this.physics.arcade.overlap(player, stars, collectStar, null, this);
     player.body.velocity.x = 0;
 
     if (cursors.left.isDown)
