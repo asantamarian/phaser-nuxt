@@ -1,4 +1,7 @@
 import "~/game/PhaserBridge";
+import audio from "~/game/objects/audio";
+import playerHelper from "~/game/objects/player";
+import starsHelper from "~/game/objects/stars";
 var platforms, player, cursors, stars, fx;
 var score = 0;
 var scoreText = "";
@@ -17,25 +20,7 @@ class GameState extends Phaser.State {
 
     cursors = this.input.keyboard.createCursorKeys();
     //AUDIO
-    fx = this.add.audio("sfx");
-    fx.allowMultiple = true;
-
-    //	And this defines the markers.
-
-    //	They consist of a key (for replaying), the time the sound starts and the duration, both given in seconds.
-    //	You can also set the volume and loop state, although we don't use them in this example (see the docs)
-
-    fx.addMarker("alien death", 1, 1.0);
-    fx.addMarker("boss hit", 3, 0.5);
-    fx.addMarker("escape", 4, 3.2);
-    fx.addMarker("meow", 8, 0.5);
-    fx.addMarker("numkey", 9, 0.1);
-    fx.addMarker("ping", 10, 1.0);
-    fx.addMarker("death", 12, 4.2);
-    fx.addMarker("shot", 17, 1.0);
-    fx.addMarker("squit", 19, 0.3);
-
-
+    fx = audio.INIT_AUDIO(this)
 
     this.add.sprite(0, 0, "star");
     this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -68,35 +53,10 @@ class GameState extends Phaser.State {
     ledge.body.immovable = true;
 
     // The player and its settings
-    player = this.add.sprite(32, this.world.height - 150, "dude");
+    player = playerHelper.new(this)
 
-    //  We need to enable physics on the player
-    this.physics.arcade.enable(player);
+    stars = starsHelper.load(this);
 
-    //  Player physics properties. Give the little guy a slight bounce.
-    player.body.bounce.y = 0.1;
-    player.body.gravity.y = 350;
-    player.body.collideWorldBounds = true;
-
-    //  Our two animations, walking left and right.
-    player.animations.add("left", [0, 1, 2, 3], 10, true);
-    player.animations.add("right", [5, 6, 7, 8], 10, true);
-
-    stars = this.add.group();
-
-    stars.enableBody = true;
-
-    //  Here we'll create 12 of them evenly spaced apart
-    for (var i = 0; i < 12; i++) {
-      //  Create a star inside of the 'stars' group
-      var star = stars.create(i * 70, 0, "star");
-
-      //  Let gravity do its thing
-      star.body.gravity.y = 100;
-
-      //  This just gives each star a slightly random bounce value
-      star.body.bounce.y = 0.7 + Math.random() * 0.2;
-    }
     console.log("GAME");
   }
   update() {
@@ -124,6 +84,7 @@ class GameState extends Phaser.State {
 
     //  Allow the player to jump if they are touching the ground.
     if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
+      fx.play('jump')
       player.body.velocity.y = -350;
     }
   }
