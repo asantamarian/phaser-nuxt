@@ -1,5 +1,5 @@
 import "~/game/PhaserBridge";
-var platforms, player, cursors, stars;
+var platforms, player, cursors, stars, fx;
 var score = 0;
 var scoreText = "";
 function collectStar(player, star) {
@@ -7,6 +7,7 @@ function collectStar(player, star) {
   star.kill();
   score += 10;
   scoreText.text = "Score: " + score;
+  fx.play("ping");
 }
 class GameState extends Phaser.State {
   create() {
@@ -15,9 +16,29 @@ class GameState extends Phaser.State {
     }
 
     cursors = this.input.keyboard.createCursorKeys();
+    //AUDIO
+    fx = this.add.audio("sfx");
+    fx.allowMultiple = true;
+
+    //	And this defines the markers.
+
+    //	They consist of a key (for replaying), the time the sound starts and the duration, both given in seconds.
+    //	You can also set the volume and loop state, although we don't use them in this example (see the docs)
+
+    fx.addMarker("alien death", 1, 1.0);
+    fx.addMarker("boss hit", 3, 0.5);
+    fx.addMarker("escape", 4, 3.2);
+    fx.addMarker("meow", 8, 0.5);
+    fx.addMarker("numkey", 9, 0.1);
+    fx.addMarker("ping", 10, 1.0);
+    fx.addMarker("death", 12, 4.2);
+    fx.addMarker("shot", 17, 1.0);
+    fx.addMarker("squit", 19, 0.3);
+
+
+
     this.add.sprite(0, 0, "star");
     this.physics.startSystem(Phaser.Physics.ARCADE);
-
 
     //  A simple background for our game
     this.add.sprite(0, 0, "sky");

@@ -7,6 +7,7 @@ class PreloadState extends Phaser.State {
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
     this.load.spritesheet("dude", "assets/dude.png", 32, 48);
+    this.load.audio('sfx', 'assets/audio/SoundEffects/fx_mixdown.ogg');
   }
 
   create() {
