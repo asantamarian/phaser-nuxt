@@ -1,6 +1,6 @@
 export default {
     containerId: 'game-container',
-    debug: true,
+    debug: false,
     width: 800,
     height: 600
-} 
+}
